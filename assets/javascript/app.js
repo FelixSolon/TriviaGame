@@ -1,4 +1,4 @@
-//I take no responsibility for misspellings.
+//all the trivia questions.
 var question0 = {
     question : "Star Wars was directed by: "
     , a : ["Stanley Kubrick", false]
@@ -78,28 +78,63 @@ var question9 = {
     , c : ["Noon", false]
     , d : ["Thirteen", true]
 };
+
+//declare all my variables
+var restartTimer;
+var correctAnswers = 0;
+var wrongAnswers = 0;
+var timedOut = 0;
 var gameStarted = false;
 var questions = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9];
+//to hold onto the question array to reset the game
+var questionsReset = questions;
 var randomNumber = Math.floor(Math.random() * questions.length);
-console.log(randomNumber);
+
+//setting this to the format it should have later so JS doesn't do something weird
 var chosenQuestion = (questions[randomNumber]);
+
+//this block deals with all the timing issues
+//variable name is odd because I'm recycling code and I don't feel like breaking things in new and interesting ways
+var intervalId
+var time = 5
+function count(){
+    time--;
+    $("#timer").text(time + " seconds remaining");
+    console.log("time remaining is: " + time);
+    if (time < 0){
+        clearTimeout(intervalId);
+        var correctAnswer = $('button.answertrue').text();
+        $("#startBox").empty();
+        $("#startBox").append("<h1 class = 'text-center'>Out of Time!</h1><h1 class = 'text-center'>The correct answer was " + correctAnswer);
+        timedOut+=1
+        restartTimer = setInterval(chooseQuestionFirst, 3000)
+    }
+};
+intervalId;
+
+
+
 function chooseQuestionFirst(){
+    clearTimeout(restartTimer); 
     var randomNumber = Math.floor(Math.random() * questions.length);
     console.log(randomNumber);
-    var chosenQuestion = (questions[randomNumber]);
-    $("#questionText").text(chosenQuestion.question);
+    chosenQuestion = (questions[randomNumber]);
     $("#startButton").addClass("hidden");
+    $("#startBox").empty();
+    $("#startBox").append("<h1 class='text-center' id='questionText'>" + chosenQuestion.question + "</h1>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.a[1] +"' id = 'a'><h2 class = 'text-center'>" + chosenQuestion.a[0] + "</h2></button><br>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.b[1] +"' id = 'b'><h2 class = 'text-center'>" + chosenQuestion.b[0] + "</h2></button><br>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.c[1] +"' id = 'c'><h2 class = 'text-center'>" + chosenQuestion.c[0] + "</h2></button><br>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.d[1] +"' id = 'd'><h2 class = 'text-center'>" + chosenQuestion.d[0] + "</h2></button><br>")
+    $("#startBox").append("<h1 id='timer'>30 seconds remaining</h1>")
     questions.splice(randomNumber, 1);
+    time = 5;
+    intervalId = setInterval(count, 1000);
 }
 
 function chooseQuestion(){
-    var randomNumber = Math.floor(Math.random() * questions.length);
-    console.log(randomNumber);
-    var chosenQuestion = (questions[randomNumber]);
+    randomNumber = Math.floor(Math.random() * questions.length);
+    chosenQuestion = (questions[randomNumber]);
     $("#questionText").text(chosenQuestion.question);
     $(".answerfalse").removeClass("answerfalse");
     $(".answertrue").removeClass("answertrue");
@@ -119,12 +154,27 @@ function chooseQuestion(){
     $("#d").html("<h2>" + chosenQuestion.d[0] + "</h2>");
     $("#d").addClass(answerD);
     questions.splice(randomNumber, 1);
+    console.log("Questions.length is " + questions.length);
+    time = 30;
+    $("#timer").text(time + " seconds remaining");
+    intervalId
 }
 
-$(document).ready(function() {
+function showEndScreen(){
+    $("#startBox").empty();
+    $("#startBox").append("<h1>You got " + correctAnswers + " correct answers!</h1>")
+    $("#startBox").append("<h1>You got " + wrongAnswers + " wrong answers!</h1>")
+    $("#startBox").append("<h1>You got " + timedOut + " timed out questions!</h1>")
+}
     
+$(document).ready(function() {
+    console.log("Questions.length is " + questions.length);
     $("#startButton").click(function() {
+        console.log("Questions.length is " + questions.length);
         chooseQuestionFirst();
+        console.log("Questions.length is " + questions.length);
+        console.log("This is working 2: " + $("button.answertrue").text())
+        console.log("This is working 1: " + $("answertrue").text())
         /*$("#questionText").text(chosenQuestion.question);
         $("#startButton").addClass("hidden");
         $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.a[1] +"'><h2 class = 'text-center' id = 'a'>" + chosenQuestion.a[0] + "</h2></button><br>")
@@ -135,13 +185,33 @@ $(document).ready(function() {
     });
 
     $(document).on("click", ".answerfalse", function(){
+        clearTimeout(intervalId);
         alert("Wrong, Bitch!");
-        chooseQuestion();
+        var correctAnswer = $('button.answertrue').text();
+        $("#startBox").empty();
+        $("#startBox").append("<h1>Wrong!</h1><h1>The correct answer was " + correctAnswer + "</h1>");
+        delayButtonAlert = setTimeout(function() {
+          $("#startBox").empty();
+          chooseQuestionFirst();
+
+        }, 5000);
+/*        chooseQuestion();*/
+        wrongAnswers+=1;
+        if(questions.length === 0){
+            alert("You're out of questions!");
+            showEndScreen();
+        }
     });
 
     $(document).on("click", ".answertrue", function(){
+        clearTimeout(intervalId);
         alert("Correctamundo!");
         chooseQuestion();
+        correctAnswers+=1;
+        if(questions.length === 0){
+            alert("You're out of questions!")
+            showEndScreen();
+        }
     });
 
 });

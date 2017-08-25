@@ -6,13 +6,17 @@ body {
 
 h1 {
     position: relative;
-    margin-top: 15%;
+    width: 75%;
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
+
 }
 
 #startButton {
     height: 10%;
     margin: auto;
-    margin-top: 10%;
+    margin-top: 0%;
     width: 50%;
 
 }
@@ -47,4 +51,5 @@ h1 {
 
 #questionText {
     margin-bottom: 5%;
+    height: 20%;
 }
