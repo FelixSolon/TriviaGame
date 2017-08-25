@@ -1,0 +1,50 @@
+body {
+    background-image: url("../images/background.png");
+    color: #fff;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+h1 {
+    position: relative;
+    margin-top: 15%;
+}
+
+#startButton {
+    height: 10%;
+    margin: auto;
+    margin-top: 10%;
+    width: 50%;
+
+}
+
+.jumbotron {
+    height: 1080px;
+}
+
+.verticalCenter {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}
+
+.panel {
+    position:fixed;
+    top: 10%;
+    left: 12.5%;
+    width:75%;
+    height:75%;
+    margin: auto;
+    border: 1px solid #ccc;
+    background-image: url("../images/panelBackground.jpg");
+}
+
+.btn-block {
+    width: 70%;
+    margin: auto;
+}
+
+#questionText {
+    margin-bottom: 5%;
+}
