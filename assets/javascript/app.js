@@ -87,7 +87,9 @@ var timedOut = 0;
 var gameStarted = false;
 var questions = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9];
 //to hold onto the question array to reset the game
-var questionsReset = questions;
+var questionsReset = [question0, question1, question2, question3, question4, question5, question6, question7, question8, question9];
+console.log(questions)
+console.log(questionsReset)
 var randomNumber = Math.floor(Math.random() * questions.length);
 
 //setting this to the format it should have later so JS doesn't do something weird
@@ -118,7 +120,6 @@ intervalId;
 function chooseQuestionFirst(){
     clearTimeout(restartTimer); 
     var randomNumber = Math.floor(Math.random() * questions.length);
-    console.log(randomNumber);
     chosenQuestion = (questions[randomNumber]);
     $("#startButton").addClass("hidden");
     $("#startBox").empty();
@@ -155,6 +156,7 @@ function chooseQuestion(){
     $("#d").html("<h2>" + chosenQuestion.d[0] + "</h2>");
     $("#d").addClass(answerD);
     questions.splice(randomNumber, 1);
+    console.log(questionsReset)
     console.log("Questions.length is " + questions.length);
     time = 20;
     $("#timer").text(time + " seconds remaining");
@@ -162,21 +164,20 @@ function chooseQuestion(){
 }
 
 function showEndScreen(){
+    clearTimeout(restartTimer)
+    clearTimeout(intervalId)
+    clearTimeout(delayButtonAlert)
     $("#startBox").empty();
     $("#startBox").append("<h1>You got " + correctAnswers + " correct answers!</h1>")
     $("#startBox").append("<h1>You got " + wrongAnswers + " wrong answers!</h1>")
-    $("#startBox").append("<h1>You got " + timedOut + " timed out questions!</h1>")
-    $("#startBox").append("<button class='btn btn-primary btn-block id = 'resetGame'><h2 class = 'text-center'>Play Again?</h2></button>")
+    $("#startBox").append("<h1>You got " + timedOut + " timed out questions!</h1><br>")
+    $("#startBox").append("<button class='btn btn-primary btn-block' id = 'resetGame'><h2 class = 'text-center'>Play Again?</h2></button>")
 }
     
 $(document).ready(function() {
     console.log("Questions.length is " + questions.length);
     $("#startButton").click(function() {
-        console.log("Questions.length is " + questions.length);
         chooseQuestionFirst();
-        console.log("Questions.length is " + questions.length);
-        console.log("This is working 2: " + $("button.answertrue").text())
-        console.log("This is working 1: " + $("answertrue").text())
         /*$("#questionText").text(chosenQuestion.question);
         $("#startButton").addClass("hidden");
         $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.a[1] +"'><h2 class = 'text-center' id = 'a'>" + chosenQuestion.a[0] + "</h2></button><br>")
@@ -185,10 +186,10 @@ $(document).ready(function() {
         $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.d[1] +"'><h2 class = 'text-center' id = 'd'>" + chosenQuestion.d[0] + "</h2></button><br>")
         questions.splice(randomNumber, 1);*/
     });
-    $(document).on("click", "#resetGame", function(){
-        questions = questionsReset;
-        chooseQuestionFirst();
-    })
+
+    //this 
+
+    //clicking the wrong answer
     $(document).on("click", ".answerfalse", function(){
         clearTimeout(intervalId);
         var correctAnswer = $('button.answertrue').text();
@@ -198,30 +199,38 @@ $(document).ready(function() {
           $("#startBox").empty();
           chooseQuestionFirst();
 
-        }, 5000);
+        }, 1);
 /*        chooseQuestion();*/
         wrongAnswers+=1;
         if(questions.length === 0){
-            alert("You're out of questions!");
             showEndScreen();
         }
     });
 
+    //clicking the right answer
     $(document).on("click", ".answertrue", function(){
         clearTimeout(intervalId);
         var correctAnswer = $('button.answertrue').text();
         $("#startBox").empty();
         $("#startBox").append("<h1>You're right!</h1><h1>The correct answer is " + correctAnswer + "</h1>");
         delayButtonAlert = setTimeout(function() {
-          $("#startBox").empty();
-          chooseQuestionFirst();
+            $("#startBox").empty();
+            chooseQuestionFirst();
 
-        }, 5000);
+        }, 1);
 /*        chooseQuestion();*/
         correctAnswers+=1;
         if(questions.length === 0){
             showEndScreen();
         }
+    });
+
+    $(document).on("click", "#resetGame", function(){
+        console.log("This should be the same as the following." + questionsReset);
+        questions = questionsReset;
+        console.log("This should be the same as the previous." + questions)
+        time = 20;
+        chooseQuestionFirst();
     });
 
 });
