@@ -96,7 +96,7 @@ var chosenQuestion = (questions[randomNumber]);
 //this block deals with all the timing issues
 //variable name is odd because I'm recycling code and I don't feel like breaking things in new and interesting ways
 var intervalId
-var time = 5
+var time = 20
 function count(){
     time--;
     $("#timer").text(time + " seconds remaining");
@@ -107,6 +107,7 @@ function count(){
         $("#startBox").empty();
         $("#startBox").append("<h1 class = 'text-center'>Out of Time!</h1><h1 class = 'text-center'>The correct answer was " + correctAnswer);
         timedOut+=1
+        time = 20;
         restartTimer = setInterval(chooseQuestionFirst, 3000)
     }
 };
@@ -126,9 +127,9 @@ function chooseQuestionFirst(){
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.b[1] +"' id = 'b'><h2 class = 'text-center'>" + chosenQuestion.b[0] + "</h2></button><br>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.c[1] +"' id = 'c'><h2 class = 'text-center'>" + chosenQuestion.c[0] + "</h2></button><br>")
     $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.d[1] +"' id = 'd'><h2 class = 'text-center'>" + chosenQuestion.d[0] + "</h2></button><br>")
-    $("#startBox").append("<h1 id='timer'>30 seconds remaining</h1>")
+    $("#startBox").append("<h1 id='timer'>" + time + " seconds remaining</h1>")
     questions.splice(randomNumber, 1);
-    time = 5;
+    time = 20;
     intervalId = setInterval(count, 1000);
 }
 
@@ -155,7 +156,7 @@ function chooseQuestion(){
     $("#d").addClass(answerD);
     questions.splice(randomNumber, 1);
     console.log("Questions.length is " + questions.length);
-    time = 30;
+    time = 20;
     $("#timer").text(time + " seconds remaining");
     intervalId
 }
@@ -165,6 +166,7 @@ function showEndScreen(){
     $("#startBox").append("<h1>You got " + correctAnswers + " correct answers!</h1>")
     $("#startBox").append("<h1>You got " + wrongAnswers + " wrong answers!</h1>")
     $("#startBox").append("<h1>You got " + timedOut + " timed out questions!</h1>")
+    $("#startBox").append("<button class='btn btn-primary btn-block id = 'resetGame'><h2 class = 'text-center'>Play Again?</h2></button>")
 }
     
 $(document).ready(function() {
@@ -183,10 +185,12 @@ $(document).ready(function() {
         $("#startBox").append("<button class='btn btn-primary btn-block answer" + chosenQuestion.d[1] +"'><h2 class = 'text-center' id = 'd'>" + chosenQuestion.d[0] + "</h2></button><br>")
         questions.splice(randomNumber, 1);*/
     });
-
+    $(document).on("click", "#resetGame", function(){
+        questions = questionsReset;
+        chooseQuestionFirst();
+    })
     $(document).on("click", ".answerfalse", function(){
         clearTimeout(intervalId);
-        alert("Wrong, Bitch!");
         var correctAnswer = $('button.answertrue').text();
         $("#startBox").empty();
         $("#startBox").append("<h1>Wrong!</h1><h1>The correct answer was " + correctAnswer + "</h1>");
@@ -205,11 +209,17 @@ $(document).ready(function() {
 
     $(document).on("click", ".answertrue", function(){
         clearTimeout(intervalId);
-        alert("Correctamundo!");
-        chooseQuestion();
+        var correctAnswer = $('button.answertrue').text();
+        $("#startBox").empty();
+        $("#startBox").append("<h1>You're right!</h1><h1>The correct answer is " + correctAnswer + "</h1>");
+        delayButtonAlert = setTimeout(function() {
+          $("#startBox").empty();
+          chooseQuestionFirst();
+
+        }, 5000);
+/*        chooseQuestion();*/
         correctAnswers+=1;
         if(questions.length === 0){
-            alert("You're out of questions!")
             showEndScreen();
         }
     });
